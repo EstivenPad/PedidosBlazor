@@ -1,0 +1,223 @@
+﻿@page "/"
+@page "/{OrdenId:int}"
+
+@using BLL;
+@using DAL; 
+@using Models;
+
+@inject IToastService toast
+
+<EditForm Model="Orden" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator/>
+    <div class="card">
+        <div class="card-header">
+            <h3>Registro de ordenes</h3>
+        </div>
+
+        <div class="card-body">
+            <form>
+                @*OrdenId*@
+                <div class="form-row align-items-center">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>Orden Id</label>
+                            <div class="input-group">
+                                <InputNumber @bind-Value="Orden.OrdenId" class="form-control col-4" />
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-primary input-group-text" @onclick="Buscar">Buscar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*Fecha*@
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <InputDate @bind-Value="Orden.Fecha" class="form-control" />
+                    <ValidationMessage For="@(() => Orden.Fecha)" />
+                </div>
+
+                @*Suplidor Id*@
+                <div class="form-group">
+                    <label>Suplidor</label>
+                    <select class="browser-default custom-select" @bind="Orden.SuplidorId">
+                        <option value="0" disabled>Seleccion una opcion</option>
+                        @foreach (var item in ListaSuplidores)
+                        {
+                            <option value="@item.SuplidorId">@item.Nombres</option>
+                        }
+                    </select>
+                    <ValidationMessage For="@(() => Orden.SuplidorId)" />
+                </div>
+
+                @*Detalle*@
+                <hr/>
+                <h5><b>Detalle:</b></h5>
+                <div class="form-row">
+                    @*Producto
+        <div class="form-group">
+            <label>Producto</label>
+            <select class="browser-default custom-select" @bind="Orden.">
+                <option value="0" disabled>Seleccione una opcion</option>
+                @foreach (var item in collection)
+                {
+
+                }
+            </select>
+        </div>*@
+
+                    @*Cantidad*@
+                    <div class="form-group col">
+                        <label>Cantidad</label>
+                        <InputNumber @bind-Value="cantidad" class="form-control" />
+                    </div>
+
+                    @*Costo*@
+                    <div class="form-group col">
+                        <label>Costo</label>
+                        <div class="input-group">
+                            <InputNumber @bind-Value="costo" class="form-control" />
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" @onclick="AgregarDetalle">
+                                    <i class="oi oi-plus" aria-hidden="true" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cantidad</th>
+                            <th>Costo</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Orden.OrdenesDetalle)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.Cantidad</td>
+                                <td>@item.Costo</td>
+                                <td><button type="button" class="btn btn-outline-danger" @onclick="() => RemoverFila(item)">Remover</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @*Monto*@
+                <div class="form-group">
+                    <label>Monto</label>
+                    <InputNumber @bind-Value="Orden.Monto" class="form-control" disabled/>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-footer">
+            <div class="form-group text-center" display: inline-block>
+                <button type="button" class="btn btn-lg btn-primary" @onclick="Nuevo">Nuevo</button>
+                <button type="submit" class="btn btn-lg btn-success">Guardar</button>
+                <button type="button" class="btn btn-lg btn-danger" @onclick="Eliminar">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int OrdenId { get; set; }
+
+    private Ordenes Orden = new Ordenes();
+    private List<Suplidores> ListaSuplidores = new List<Suplidores>();
+
+    public int cantidad;
+    public double costo;
+
+    protected override void OnInitialized()
+    {
+        Nuevo();
+        Buscar();
+        AgregarSuplidores();
+    }
+
+    public void AgregarDetalle()
+    {
+        Orden.OrdenesDetalle.Add(new OrdenesDetalle{
+            OrdenId = Orden.OrdenId,
+            Cantidad = cantidad,
+            Costo = costo
+        });
+
+        CalcularMonto();
+    }
+
+    public void AgregarSuplidores()
+    {
+        Contexto contexto = new Contexto();
+        ListaSuplidores = contexto.Suplidores.ToList();
+    }
+
+    public void CalcularMonto()
+    {
+        Orden.Monto += costo;
+    }
+
+    public void RemoverFila(OrdenesDetalle OrdenRemovida)
+    {
+        Orden.Monto -= OrdenRemovida.Costo;
+        Orden.OrdenesDetalle.Remove(OrdenRemovida);
+    }
+
+    public void Nuevo()
+    {
+        Orden = new Ordenes();
+    }
+
+    private void Buscar()
+    {
+        if(Orden.OrdenId > 0)
+        {
+            var encontrado = OrdenesBLL.Buscar(Orden.OrdenId);
+
+            if (encontrado != null)
+                this.Orden = encontrado;
+            else
+                toast.ShowWarning("No encontrado");
+        }
+    }
+
+    public void Guardar()
+    {
+        bool guardo;
+
+        guardo = OrdenesBLL.Guardar(Orden);
+
+        if (guardo)
+        {
+            Nuevo();
+            toast.ShowSuccess("Guardado correctamente");
+        }
+        else
+            toast.ShowError("No fue posible guardar");
+    }
+
+    public void Eliminar()
+    {
+        bool elimino;
+
+        elimino = OrdenesBLL.Eliminar(Orden.OrdenId);
+
+        if (elimino)
+        {
+            Nuevo();
+            toast.ShowSuccess("Eliminado correctamente");
+        }
+        else
+            toast.ShowError("No fue posible eliminar");
+    }
+}
