@@ -41,8 +41,8 @@
                 @*Suplidor Id*@
                 <div class="form-group">
                     <label>Suplidor</label>
-                    <select class="browser-default custom-select" @bind="Orden.SuplidorId">
-                        <option value="0" disabled>Seleccion una opcion</option>
+                    <select class="browser-default custom-select" @bind="Orden.SuplidorId" @onfocusout="LlenaListaProductos">
+                        <option value="0" disabled>Seleccione una opcion</option>
                         @foreach (var item in ListaSuplidores)
                         {
                             <option value="@item.SuplidorId">@item.Nombres</option>
@@ -55,32 +55,32 @@
                 <hr/>
                 <h5><b>Detalle:</b></h5>
                 <div class="form-row">
-                    @*Producto
-        <div class="form-group">
-            <label>Producto</label>
-            <select class="browser-default custom-select" @bind="Orden.">
-                <option value="0" disabled>Seleccione una opcion</option>
-                @foreach (var item in collection)
-                {
-
-                }
-            </select>
-        </div>*@
+                    @*Producto*@
+                    <div class="form-group col">
+                        <label>Producto</label>
+                        <select class="browser-default custom-select" @bind="ProductoSeleccionado" @onfocusout="LlenaCosto" disabled="@IsDisabled">
+                            <option value="0" disabled>Seleccione una opcion</option>
+                            @foreach (var item in ListaProductos)
+                            {
+                                <option value="@item.ProductoId">@item.Descripcion</option>
+                            }
+                        </select>
+                    </div>
 
                     @*Cantidad*@
                     <div class="form-group col">
                         <label>Cantidad</label>
-                        <InputNumber @bind-Value="cantidad" class="form-control" />
+                        <InputNumber @bind-Value="cantidad" class="form-control"/>
                     </div>
 
                     @*Costo*@
                     <div class="form-group col">
                         <label>Costo</label>
                         <div class="input-group">
-                            <InputNumber @bind-Value="costo" class="form-control" />
+                            <InputNumber @bind-Value="costo" class="form-control" disabled/>
                             <div class="input-group-append">
                                 <button type="button" class="btn btn-primary" @onclick="AgregarDetalle">
-                                    <i class="oi oi-plus" aria-hidden="true" />
+                                    <i class="oi oi-plus" aria-hidden="true"/>
                                 </button>
                             </div>
                         </div>
@@ -90,9 +90,10 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>Producto</th>
                             <th>Cantidad</th>
                             <th>Costo</th>
+                            <th>Total</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -101,9 +102,10 @@
                         @foreach (var item in Orden.OrdenesDetalle)
                         {
                             <tr>
-                                <td>@item.Id</td>
+                                <td>@ProductosBLL.Buscar(item.ProductoId).Descripcion</td>
                                 <td>@item.Cantidad</td>
                                 <td>@item.Costo</td>
+                                <td>@(item.Cantidad * item.Costo)</td>
                                 <td><button type="button" class="btn btn-outline-danger" @onclick="() => RemoverFila(item)">Remover</button></td>
                             </tr>
                         }
@@ -134,21 +136,26 @@
 
     private Ordenes Orden = new Ordenes();
     private List<Suplidores> ListaSuplidores = new List<Suplidores>();
+    private List<Productos> ListaProductos = new List<Productos>();
 
-    public int cantidad;
-    public double costo;
+    public bool IsDisabled;
+    public int ProductoSeleccionado { get; set; }
+    public int cantidad { get; set; }
+    public double costo { get; set; }
 
     protected override void OnInitialized()
     {
         Nuevo();
         Buscar();
-        AgregarSuplidores();
+        LlenaListaSuplidores();
+        IsDisabled = true;
     }
 
     public void AgregarDetalle()
     {
         Orden.OrdenesDetalle.Add(new OrdenesDetalle{
             OrdenId = Orden.OrdenId,
+            ProductoId = ProductoSeleccionado,
             Cantidad = cantidad,
             Costo = costo
         });
@@ -156,26 +163,43 @@
         CalcularMonto();
     }
 
-    public void AgregarSuplidores()
+    public void LlenaListaSuplidores()
     {
-        Contexto contexto = new Contexto();
-        ListaSuplidores = contexto.Suplidores.ToList();
+        ListaSuplidores = SuplidoresBLL.GetList(p => true);
+    }
+
+    public void LlenaListaProductos()
+    {
+        IsDisabled = false;
+        ListaProductos = ProductosBLL.GetList(p => true);
     }
 
     public void CalcularMonto()
     {
-        Orden.Monto += costo;
+        Orden.Monto = 0;
+        foreach (var item in Orden.OrdenesDetalle)
+        {
+            Orden.Monto += ProductosBLL.Buscar(item.ProductoId).Costo * item.Cantidad;
+        }
+    }
+
+    public void LlenaCosto()
+    {
+        costo = ProductosBLL.Buscar(ProductoSeleccionado).Costo;
     }
 
     public void RemoverFila(OrdenesDetalle OrdenRemovida)
     {
-        Orden.Monto -= OrdenRemovida.Costo;
         Orden.OrdenesDetalle.Remove(OrdenRemovida);
+        CalcularMonto();
     }
 
     public void Nuevo()
     {
         Orden = new Ordenes();
+        costo = 0;
+        ProductoSeleccionado = 0;
+        cantidad = 0;
     }
 
     private void Buscar()

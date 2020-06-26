@@ -28,8 +28,7 @@ namespace PedidosBlazor.Migrations
                 {
                     ProductoId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    SuplidorId = table.Column<int>(nullable: false),
-                    Descripcion = table.Column<string>(nullable: false),
+                    Descripcion = table.Column<string>(nullable: true),
                     Costo = table.Column<double>(nullable: false),
                     Inventario = table.Column<int>(nullable: false)
                 },
@@ -44,7 +43,7 @@ namespace PedidosBlazor.Migrations
                 {
                     SuplidorId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Nombres = table.Column<string>(nullable: false)
+                    Nombres = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -75,18 +74,18 @@ namespace PedidosBlazor.Migrations
 
             migrationBuilder.InsertData(
                 table: "Productos",
-                columns: new[] { "ProductoId", "Costo", "Descripcion", "Inventario", "SuplidorId" },
-                values: new object[] { 1, 28000.0, "Laptop DELL Inspiron 3583", 15, 1 });
+                columns: new[] { "ProductoId", "Costo", "Descripcion", "Inventario" },
+                values: new object[] { 1, 28000.0, "Laptop DELL Inspiron 3583", 15 });
 
             migrationBuilder.InsertData(
                 table: "Productos",
-                columns: new[] { "ProductoId", "Costo", "Descripcion", "Inventario", "SuplidorId" },
-                values: new object[] { 2, 25000.0, "Laptop HP Pavilion 15-CS2079", 12, 2 });
+                columns: new[] { "ProductoId", "Costo", "Descripcion", "Inventario" },
+                values: new object[] { 2, 25000.0, "Laptop HP Pavilion 15-CS2079", 12 });
 
             migrationBuilder.InsertData(
                 table: "Productos",
-                columns: new[] { "ProductoId", "Costo", "Descripcion", "Inventario", "SuplidorId" },
-                values: new object[] { 3, 23000.0, "Laptop DELL Latitud e5440", 10, 1 });
+                columns: new[] { "ProductoId", "Costo", "Descripcion", "Inventario" },
+                values: new object[] { 3, 23000.0, "Laptop DELL Latitud e5440", 10 });
 
             migrationBuilder.InsertData(
                 table: "Suplidores",

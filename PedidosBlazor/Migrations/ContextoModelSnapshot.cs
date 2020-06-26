@@ -71,13 +71,9 @@ namespace PedidosBlazor.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("Descripcion")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Inventario")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SuplidorId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ProductoId");
@@ -90,24 +86,21 @@ namespace PedidosBlazor.Migrations
                             ProductoId = 1,
                             Costo = 28000.0,
                             Descripcion = "Laptop DELL Inspiron 3583",
-                            Inventario = 15,
-                            SuplidorId = 1
+                            Inventario = 15
                         },
                         new
                         {
                             ProductoId = 2,
                             Costo = 25000.0,
                             Descripcion = "Laptop HP Pavilion 15-CS2079",
-                            Inventario = 12,
-                            SuplidorId = 2
+                            Inventario = 12
                         },
                         new
                         {
                             ProductoId = 3,
                             Costo = 23000.0,
                             Descripcion = "Laptop DELL Latitud e5440",
-                            Inventario = 10,
-                            SuplidorId = 1
+                            Inventario = 10
                         });
                 });
 
@@ -118,7 +111,6 @@ namespace PedidosBlazor.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Nombres")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("SuplidorId");

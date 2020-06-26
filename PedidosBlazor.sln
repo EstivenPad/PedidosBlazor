@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PedidosBlazor", "PedidosBlazor\PedidosBlazor.csproj", "{28F74108-A75F-4F86-8DEA-37992E6BE1DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PedidosBlazorTests", "PedidosBlazorTests\PedidosBlazorTests.csproj", "{E45AE597-276A-4800-9406-9D5B09826241}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{28F74108-A75F-4F86-8DEA-37992E6BE1DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28F74108-A75F-4F86-8DEA-37992E6BE1DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28F74108-A75F-4F86-8DEA-37992E6BE1DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E45AE597-276A-4800-9406-9D5B09826241}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E45AE597-276A-4800-9406-9D5B09826241}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E45AE597-276A-4800-9406-9D5B09826241}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E45AE597-276A-4800-9406-9D5B09826241}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

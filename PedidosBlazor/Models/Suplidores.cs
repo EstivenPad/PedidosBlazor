@@ -12,7 +12,6 @@ namespace PedidosBlazor.Models
         [Key]
         public int SuplidorId { get; set; }
 
-        [Required(ErrorMessage = "Este campo es obligatorio")]
         public string Nombres { get; set; }
     }
 }
